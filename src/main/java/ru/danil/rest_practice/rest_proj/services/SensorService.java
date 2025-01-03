@@ -2,6 +2,7 @@ package ru.danil.rest_practice.rest_proj.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.danil.rest_practice.rest_proj.exceptions.SensorNotFoundException;
 import ru.danil.rest_practice.rest_proj.models.Sensor;
 import ru.danil.rest_practice.rest_proj.repositories.SensorRepository;
 
@@ -21,7 +22,7 @@ public class SensorService {
     }
 
     public Sensor getSensorById(int id) {
-        return sensorRepository.findById(id).orElse(null);
+        return sensorRepository.findById(id).orElseThrow(SensorNotFoundException::new);
     }
 
     @Transactional
@@ -30,13 +31,19 @@ public class SensorService {
     }
 
     @Transactional
-    public void updateSensor(int id, Sensor sensor) {
+    public void updateSensor(int id, Sensor sensor){
+        if(!sensorRepository.existsById(id))
+            throw new SensorNotFoundException();
+
         sensor.setId(id);
         sensorRepository.save(sensor);
     }
 
     @Transactional
-    public void deleteSensorById(int id) {
+    public void deleteSensorById(int id){
+        if(!sensorRepository.existsById(id))
+            throw new SensorNotFoundException();
+
         sensorRepository.deleteById(id);
     }
 }
