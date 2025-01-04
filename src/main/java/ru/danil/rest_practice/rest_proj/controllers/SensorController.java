@@ -69,23 +69,6 @@ public class SensorController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @ExceptionHandler(SensorNotFoundException.class)
-    public ResponseEntity<SensorErrorResponse> handleSensorNotFound(){
-        SensorErrorResponse response = new SensorErrorResponse(
-                "Sensor not found", LocalDateTime.now()
-        );
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<SensorErrorResponse> handleSensorNotCreated(SensorNotCreatedException ex){
-        SensorErrorResponse response = new SensorErrorResponse(
-                ex.getMessage(), LocalDateTime.now()
-        );
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-
     private void validateSensorDTO(SensorDTO sensorDTO, BindingResult bindingResult) {
         sensorDTOValidator.validate(sensorDTO, bindingResult);
         if(bindingResult.hasErrors()){
@@ -102,5 +85,4 @@ public class SensorController {
             throw new SensorNotCreatedException(errors.toString());
         }
     }
-
 }
