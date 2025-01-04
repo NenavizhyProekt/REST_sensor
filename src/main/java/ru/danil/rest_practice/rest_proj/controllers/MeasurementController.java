@@ -10,6 +10,7 @@ import ru.danil.rest_practice.rest_proj.exceptions.MeasurementNotCreatedExceptio
 import ru.danil.rest_practice.rest_proj.services.MeasurementService;
 import ru.danil.rest_practice.rest_proj.util.ValidationErrorFormatter;
 import ru.danil.rest_practice.rest_proj.util.mappers.MeasurementMapper;
+import ru.danil.rest_practice.rest_proj.util.responses.RainyDaysResponse;
 
 import java.util.List;
 
@@ -46,5 +47,11 @@ public class MeasurementController {
 
         measurementService.save(measurementMapper.dtoToMeasurement(measurementDTO));
         return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/rainyDaysCount")
+    public ResponseEntity<RainyDaysResponse> getRainyDaysCount() {
+        List<MeasurementDTO> responseBody = measurementService.getRainyDays().stream().map(measurementMapper::measurementToDTO).toList();
+        return new ResponseEntity<>(new RainyDaysResponse(responseBody), HttpStatus.OK);
     }
 }

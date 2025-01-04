@@ -32,6 +32,10 @@ public class MeasurementService {
                 .orElseThrow(MeasurementNotFoundException::new);
     }
 
+    public List<Measurement> getRainyDays(){
+        return measurementRepository.findAll().stream().filter(Measurement::isRaining).toList();
+    }
+
     @Transactional
     public void save(Measurement measurement) {
         Sensor sensor = measurement.getSensor();
