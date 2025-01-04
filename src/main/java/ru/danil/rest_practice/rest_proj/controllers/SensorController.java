@@ -4,18 +4,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.danil.rest_practice.rest_proj.dto.SensorAndMeasuresDTO;
 import ru.danil.rest_practice.rest_proj.dto.SensorDTO;
 import ru.danil.rest_practice.rest_proj.exceptions.SensorNotCreatedException;
-import ru.danil.rest_practice.rest_proj.exceptions.SensorNotFoundException;
 import ru.danil.rest_practice.rest_proj.services.SensorService;
-import ru.danil.rest_practice.rest_proj.util.errorEntities.SensorErrorResponse;
+import ru.danil.rest_practice.rest_proj.util.ValidationErrorFormatter;
 import ru.danil.rest_practice.rest_proj.util.mappers.SensorMapper;
 import ru.danil.rest_practice.rest_proj.util.validators.SensorDTOValidator;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -45,7 +42,10 @@ public class SensorController {
     public ResponseEntity<HttpStatus> registerSensor(
             @RequestBody @Valid SensorDTO sensorDTO, BindingResult bindingResult
     ) {
-        validateSensorDTO(sensorDTO, bindingResult);
+        sensorDTOValidator.validate(sensorDTO, bindingResult);
+        if(bindingResult.hasErrors()){
+            throw new SensorNotCreatedException(ValidationErrorFormatter.extractMessageFromErrors(bindingResult));
+        }
 
         sensorService.saveSensor(sensorMapper.dtoToSensor(sensorDTO));
         return ResponseEntity.ok(HttpStatus.CREATED);
@@ -57,7 +57,10 @@ public class SensorController {
             @RequestBody @Valid SensorDTO sensorDTO,
             BindingResult bindingResult
     ){
-        validateSensorDTO(sensorDTO, bindingResult);
+        sensorDTOValidator.validate(sensorDTO, bindingResult);
+        if(bindingResult.hasErrors()){
+            throw new SensorNotCreatedException(ValidationErrorFormatter.extractMessageFromErrors(bindingResult));
+        }
 
         sensorService.updateSensor(id, sensorMapper.dtoToSensor(sensorDTO));
         return ResponseEntity.ok(HttpStatus.OK);
@@ -67,22 +70,5 @@ public class SensorController {
     public ResponseEntity<HttpStatus> deleteSensor(@PathVariable int id) {
         sensorService.deleteSensorById(id);
         return ResponseEntity.ok(HttpStatus.OK);
-    }
-
-    private void validateSensorDTO(SensorDTO sensorDTO, BindingResult bindingResult) {
-        sensorDTOValidator.validate(sensorDTO, bindingResult);
-        if(bindingResult.hasErrors()){
-            StringBuilder errors = new StringBuilder();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            fieldErrors.forEach(
-                    error -> errors
-                            .append(error.getField())
-                            .append(" - ")
-                            .append(error.getDefaultMessage())
-                            .append(";")
-            );
-
-            throw new SensorNotCreatedException(errors.toString());
-        }
     }
 }

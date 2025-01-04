@@ -1,10 +1,14 @@
 package ru.danil.rest_practice.rest_proj.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.danil.rest_practice.rest_proj.dto.MeasurementDTO;
+import ru.danil.rest_practice.rest_proj.exceptions.MeasurementNotCreatedException;
 import ru.danil.rest_practice.rest_proj.services.MeasurementService;
+import ru.danil.rest_practice.rest_proj.util.ValidationErrorFormatter;
 import ru.danil.rest_practice.rest_proj.util.mappers.MeasurementMapper;
 
 import java.util.List;
@@ -32,7 +36,14 @@ public class MeasurementController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<HttpStatus> addMeasurement(@RequestBody MeasurementDTO measurementDTO){
+    public ResponseEntity<HttpStatus> addMeasurement(
+            @RequestBody @Valid MeasurementDTO measurementDTO,
+            BindingResult bindingResult
+    ){
+        if(bindingResult.hasErrors()){
+            throw new MeasurementNotCreatedException(ValidationErrorFormatter.extractMessageFromErrors(bindingResult));
+        }
+
         measurementService.save(measurementMapper.dtoToMeasurement(measurementDTO));
         return ResponseEntity.ok(HttpStatus.CREATED);
     }

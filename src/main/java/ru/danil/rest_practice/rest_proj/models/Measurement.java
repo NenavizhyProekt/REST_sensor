@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "measurement")
 public class Measurement {
@@ -25,6 +27,10 @@ public class Measurement {
     @NotNull
     private boolean isRaining;
 
+    @Column(name = "recording_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date recordingTime;
+
     @ManyToOne
     @JoinColumn(name = "sensor_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -34,9 +40,10 @@ public class Measurement {
     public Measurement() {
     }
 
-    public Measurement(float value, boolean isRaining, Sensor sensor) {
+    public Measurement(float value, boolean isRaining, Date recordingTime, Sensor sensor) {
         this.value = value;
         this.isRaining = isRaining;
+        this.recordingTime = recordingTime;
         this.sensor = sensor;
     }
 
@@ -70,6 +77,14 @@ public class Measurement {
 
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
+    }
+
+    public Date getRecordingTime() {
+        return recordingTime;
+    }
+
+    public void setRecordingTime(Date recordingTime) {
+        this.recordingTime = recordingTime;
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.danil.rest_practice.rest_proj.exceptions.SensorNotCreatedException;
 import ru.danil.rest_practice.rest_proj.exceptions.SensorNotFoundException;
-import ru.danil.rest_practice.rest_proj.util.errorEntities.SensorErrorResponse;
+import ru.danil.rest_practice.rest_proj.util.responses.SensorErrorResponse;
 
 import java.time.LocalDateTime;
 

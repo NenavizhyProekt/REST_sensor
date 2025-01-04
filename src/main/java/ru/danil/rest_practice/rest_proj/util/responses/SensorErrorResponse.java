@@ -1,4 +1,4 @@
-package ru.danil.rest_practice.rest_proj.util.errorEntities;
+package ru.danil.rest_practice.rest_proj.util.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
